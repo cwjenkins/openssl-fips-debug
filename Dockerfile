@@ -61,4 +61,4 @@ RUN git clone https://github.com/junaruga/report-openssl-fips-ed25519.git /usr/l
     && echo "OPENSSL_CONF=${OPENSSL_HOME}/ssl/openssl_fips.cnf OPENSSL_CONF_INCLUDE=${OPENSSL_HOME}/ssl OPENSSL_MODULES=${OPENSSL_LIB}/ossl-modules gdb --args ./ed25519 ed25519_pub.pem" > db.sh \
     && chmod +x *.sh \
     && ./rc.sh \
-    && OPENSSL_CONF=${OPENSSL_HOME}/ssl/openssl_fips.cnf OPENSSL_CONF_INCLUDE=${OPENSSL_HOME}/ssl OPENSSL_MODULES=${OPENSSL_LIB}/ossl-modules ./ed25519 ed25519_pub.pem
+    && trap "OPENSSL_CONF=${OPENSSL_HOME}/ssl/openssl_fips.cnf OPENSSL_CONF_INCLUDE=${OPENSSL_HOME}/ssl OPENSSL_MODULES=${OPENSSL_LIB}/ossl-modules ./ed25519 ed25519_pub.pem" EXIT
