@@ -1,0 +1,9 @@
+--- ./ext/openssl/ossl_pkey_rsa.c	2023-07-13 01:57:44.488567013 +0000
++++ ./ext/openssl/ossl_pkey_rsa.c	2023-07-13 01:57:54.692489004 +0000
+@@ -939,7 +939,6 @@
+     rb_define_method(cRSA, "params", ossl_rsa_get_params, 0);
+
+     DefRSAConst(PKCS1_PADDING);
+-    DefRSAConst(SSLV23_PADDING);
+     DefRSAConst(NO_PADDING);
+     DefRSAConst(PKCS1_OAEP_PADDING);

@@ -12,7 +12,8 @@ ENV OPENSSL_BIN=${OPENSSL_HOME}/bin/
 
 # Fetch deps
 RUN dnf -y update \
-    && dnf install -y git \
+    && dnf install -y wget \
+                      git \
                       gcc \
                       g++ \
                       gdb \
@@ -62,3 +63,19 @@ RUN git clone https://github.com/junaruga/report-openssl-fips-ed25519.git /usr/l
     && chmod +x *.sh \
     && ./rc.sh \
     && trap "OPENSSL_CONF=${OPENSSL_HOME}/ssl/openssl_fips.cnf OPENSSL_CONF_INCLUDE=${OPENSSL_HOME}/ssl OPENSSL_MODULES=${OPENSSL_LIB}/ossl-modules ./ed25519 ed25519_pub.pem" EXIT
+
+# ruby-install setup
+RUN wget https://github.com/postmodern/ruby-install/releases/download/v0.9.1/ruby-install-0.9.1.tar.gz \
+    && tar -xzvf ruby-install-0.9.1.tar.gz \
+    && cd ruby-install-0.9.1/ \
+    && sudo make install
+
+# Install ruby 2.7.4
+COPY rsa.patch .
+RUN ./bin/ruby-install -p rsa.patch 2.7.4 -- --with-openssl-dir=${OPENSSL_HOME}
+
+# Test fips via ruby
+RUN OPENSSL_CONF=${OPENSSL_HOME}/ssl/openssl_fips.cnf \
+    OPENSSL_CONF_INCLUDE=${OPENSSL_HOME}/ssl \
+    OPENSSL_MODULES=${OPENSSL_LIB}/ossl-modules \
+    /opt/rubies/ruby-2.7.4/bin/ruby -e "require 'openssl'; OpenSSL::Digest::MD5.hexdigest('hi');"
